@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29609.76
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICH.BouncyCastle.Sample", "samples\ICH.BouncyCastle.Sample\ICH.BouncyCastle.Sample.csproj", "{F01B65DC-B115-42BB-9876-644DD3EFE06D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICH.BouncyCastle", "src\ICH.BouncyCastle\ICH.BouncyCastle.csproj", "{9A1B4D73-3B44-437A-B3F3-6DC48F01C330}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AB7E63B4-B68E-485E-B3D8-C2293F8696BA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{34F493FC-61CA-45F3-ACFC-465EF2988587}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{984CFF56-F7DB-484F-8969-33A1C8F4B393}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\gitlab_43\ich-invoice-sdk\NuGet.config = ..\..\gitlab_43\ich-invoice-sdk\NuGet.config
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F01B65DC-B115-42BB-9876-644DD3EFE06D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F01B65DC-B115-42BB-9876-644DD3EFE06D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F01B65DC-B115-42BB-9876-644DD3EFE06D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F01B65DC-B115-42BB-9876-644DD3EFE06D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A1B4D73-3B44-437A-B3F3-6DC48F01C330}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A1B4D73-3B44-437A-B3F3-6DC48F01C330}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A1B4D73-3B44-437A-B3F3-6DC48F01C330}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A1B4D73-3B44-437A-B3F3-6DC48F01C330}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F01B65DC-B115-42BB-9876-644DD3EFE06D} = {34F493FC-61CA-45F3-ACFC-465EF2988587}
+		{9A1B4D73-3B44-437A-B3F3-6DC48F01C330} = {AB7E63B4-B68E-485E-B3D8-C2293F8696BA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {47053348-D3B6-4321-8CA1-DA324F06C9CE}
+	EndGlobalSection
+EndGlobal

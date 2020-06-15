@@ -9,7 +9,7 @@ namespace ICH.BouncyCastle
 {
     public class RSA
     {
-        public static byte[] Encrypt(byte[] data, ICipherParameters parameters, string algorithm)
+        public static byte[] Encrypt(byte[] data, AsymmetricKeyParameter parameters, string algorithm)
         {
             if (data == null)
             {
@@ -29,7 +29,7 @@ namespace ICH.BouncyCastle
             return bufferedCipher.DoFinal(data);
         }
 
-        public static byte[] Decrypt(byte[] data, ICipherParameters parameters, string algorithm)
+        public static byte[] Decrypt(byte[] data, AsymmetricKeyParameter parameters, string algorithm)
         {
             if (data == null)
             {
@@ -48,22 +48,22 @@ namespace ICH.BouncyCastle
             return bufferedCipher.DoFinal(data);
         }
 
-        public static string EncryptToBase64(string data, ICipherParameters parameters, string algorithm)
+        public static string EncryptToBase64(string data, AsymmetricKeyParameter parameters, string algorithm)
         {
             return Base64.ToBase64String(Encrypt(Encoding.UTF8.GetBytes(data), parameters, algorithm));
         }
 
-        public static string DecryptFromBase64(string data, ICipherParameters parameters, string algorithm)
+        public static string DecryptFromBase64(string data, AsymmetricKeyParameter parameters, string algorithm)
         {
             return Encoding.UTF8.GetString(Decrypt(Base64.Decode(data), parameters, algorithm));
         }
 
-        public static string EncryptToHex(string data, ICipherParameters parameters, string algorithm)
+        public static string EncryptToHex(string data, AsymmetricKeyParameter parameters, string algorithm)
         {
             return Hex.ToHexString(Encrypt(Encoding.UTF8.GetBytes(data), parameters, algorithm));
         }
 
-        public static string DecryptFromHex(string data, ICipherParameters parameters, string algorithm)
+        public static string DecryptFromHex(string data, AsymmetricKeyParameter parameters, string algorithm)
         {
             return Encoding.UTF8.GetString(Decrypt(Hex.Decode(data), parameters, algorithm));
         }

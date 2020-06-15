@@ -11,11 +11,11 @@ namespace ICH.BouncyCastle
 {
     public class RSAKeyGenerator
     {
-        public RSAKeyParameter Pkcs1(int keySize, bool format=false)
+        public KeyParameter Pkcs1(int keySize, bool format=false)
         {
             var keyGenerator = GeneratorUtilities.GetKeyPairGenerator("RSA");
             keyGenerator.Init(new KeyGenerationParameters(new SecureRandom(), keySize));
-            // keyGenerator.Init(new RsaKeyGenerationParameters(BigInteger.ValueOf(3), new SecureRandom(), keySize, 25));
+        
             var keyPair = keyGenerator.GenerateKeyPair();
 
             var subjectPublicKeyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair.Public);
@@ -23,14 +23,14 @@ namespace ICH.BouncyCastle
             
             if (!format)
             {
-                return new RSAKeyParameter
+                return new KeyParameter
                 {
                     PrivateKey = Base64.ToBase64String(privateKeyInfo.ParsePrivateKey().GetEncoded()),
                     PublicKey = Base64.ToBase64String(subjectPublicKeyInfo.GetEncoded())
                 };
             }
 
-            var rsaKey = new RSAKeyParameter();
+            var rsaKey = new KeyParameter();
             using (var sw = new StringWriter())
             {
                 var pWrt = new PemWriter(sw);
@@ -50,7 +50,7 @@ namespace ICH.BouncyCastle
             return rsaKey;
         }
 
-        public RSAKeyParameter Pkcs8(int keySize, bool format=false)
+        public KeyParameter Pkcs8(int keySize, bool format=false)
         {
             var keyGenerator = GeneratorUtilities.GetKeyPairGenerator("RSA");
             keyGenerator.Init(new KeyGenerationParameters(new SecureRandom(), keySize));
@@ -61,14 +61,14 @@ namespace ICH.BouncyCastle
 
             if (!format)
             {
-                return new RSAKeyParameter
+                return new KeyParameter
                 {
                     PrivateKey = Base64.ToBase64String(privateKeyInfo.GetEncoded()),
                     PublicKey = Base64.ToBase64String(subjectPublicKeyInfo.GetEncoded())
                 };
             }
 
-            var rsaKey = new RSAKeyParameter();
+            var rsaKey = new KeyParameter();
             using (var sw = new StringWriter())
             {
                 var pWrt = new PemWriter(sw);

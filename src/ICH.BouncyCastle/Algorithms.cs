@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ICH.BouncyCastle
 {
-    public class CipherAlgorithms
+    public class Algorithms
     {
         public const string AES_CBC_NoPadding = "AES/CBC/NoPadding";
         public const string AES_CBC_PKCS7Padding = "AES/CBC/PKCS7Padding";
@@ -96,5 +96,24 @@ namespace ICH.BouncyCastle
         public const string RSA_ECB_OAEPWithSHA384AndMGF1Padding = "RSA/ECB/OAEPWithSHA384AndMGF1Padding";
         public const string RSA_ECB_OAEPWithMD5AndMGF1Padding = "RSA/ECB/OAEPWithMD5AndMGF1Padding";
 
+        public const string HMacSHA1="HMac-SHA1";
+        public const string HMacMD5="HMac-MD5";
+        public const string HMacMD4="HMac-MD4";
+        public const string HMacMD2="HMac-MD2";
+        public const string HMacSHA224="HMac-SHA224";
+        public const string HMacSHA256="HMac-SHA256";
+        public const string HMacSHA384="HMac-SHA384";
+        public const string HMacSHA512_224 = "HMac-SHA512/224";
+        public const string HMacSHA512_256="HMac-SHA512/256";
+        public const string HMacRIPEMD128="HMac-RIPEMD128";
+        public const string HMacRIPEMD160="HMac-RIPEMD160";
+        public const string HMacTIGER="HMac-TIGER";
+        public const string HMacKECCAK224="HMac-KECCAK224";
+        public const string HMacKECCAK256="HMac-KECCAK256";
+        public const string HMacKECCAK288="HMac-KECCAK288";
+        public const string HMacKECCAK384="HMac-KECCAK384";
+        public const string HMacSHA3512="HMac-SHA3-512";
+        public const string HMacGOST3411_2012256="HMac-GOST3411-2012-256";
+        public const string HMacGOST3411_2012_512="HMac-GOST3411-2012-512";
     }
 }

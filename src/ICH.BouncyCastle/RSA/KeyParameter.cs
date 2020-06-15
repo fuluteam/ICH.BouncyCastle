@@ -1,6 +1,6 @@
 ﻿namespace ICH.BouncyCastle
 {
-    public class RSAKeyParameter
+    public class KeyParameter
     {
         /// <summary>
         /// 公钥

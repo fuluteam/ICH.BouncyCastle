@@ -83,15 +83,16 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             //RSA_ECB_PKCS1Padding();
             //RSA_NONE_PKCS1Padding();
 
-            //MD5Test();
+            //MD5Sample();
+            SHA256Sample();
 
-            //HMacSha1Test();
+            //HMacSha1Sample();
 
 
-            //SHA1WithDSATest();
+            //SHA1WithDSASample();
 
-            //SHA256WithDSATest();
-            //SHA256WithECDSATest();
+            //SHA256WithDSASample();
+            //SHA256WithECDSASample();
             Console.ReadLine();
         }
 
@@ -207,42 +208,49 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
         }
 
 
-        private static void MD5Test()
+        private static void MD5Sample()
         {
+            var s = "hello md5";
+            Console.WriteLine(s);
+
             var resBytes1 = MD5.Compute("hello md5");
 
             var resBytes2 = MD5.Compute2("hello md5");
 
             var a1 = BitConverter.ToString(resBytes1).Replace("-", "");
+            Console.WriteLine($"通过BitConverter.ToString转换得到结果：{a1}");
             var a2 = Hex.ToHexString(resBytes1).ToUpper();
+            Console.WriteLine($"通过Hex.ToHexString转换得到结果：{a2}");
 
-            Console.WriteLine(a1);
+            var a3 = Hex.ToHexString(resBytes2).ToUpper();
 
-            Console.WriteLine(a2);
-
-            var b1 = BitConverter.ToString(resBytes2).Replace("-", "");
-            var b2 = Hex.ToHexString(resBytes2).ToUpper();
-
-            Console.WriteLine(b1);
-            Console.WriteLine(b2);
-
+            Console.WriteLine($"不使用BouncyCastle得到结果：{a3}");
 
             Console.WriteLine();
         }
 
-        private static void HMacSha1Test()
+        private static void SHA256Sample()
         {
-            var s = "hello hmac sha1";
-            var a = HMACSHA1.GeneratorKey();
+            var s = "hello sha-256";
+            Console.WriteLine(s);
 
-            Console.WriteLine(Base64.ToBase64String(HMACSHA1.Compute(s, a)));
+            Console.WriteLine($"使用BouncyCastle计算结果（转Base64字符串）：{Base64.ToBase64String(SHA256.Compute1(s))}");
 
-            Console.WriteLine(Base64.ToBase64String(HMACSHA1.Compute2(s, a)));
-
-            Console.WriteLine(Base64.ToBase64String(HMACSHA1.Compute(s, a)));
+            Console.WriteLine($"不使用BouncyCastle计算结果（转Base64字符串）：{Base64.ToBase64String(SHA256.Compute2(s))}");
         }
 
-        private static void SHA1WithDSATest()
+        private static void HMacSha256Sample()
+        {
+            var s = "hello hmac sha256";
+            var k = HMACSHA256.GeneratorKey();
+
+            Console.WriteLine(Base64.ToBase64String(HMACSHA256.Compute(s, k)));
+
+            Console.WriteLine(Base64.ToBase64String(HMACSHA256.Compute2(s, k)));
+
+        }
+
+        private static void SHA1WithDSASample()
         {
             var keyParameter = DSAKeyGenerator.Generator();
 
@@ -257,7 +265,7 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             Console.WriteLine(verified ? "signature verified" : "signature not verified");
         }
 
-        private static void SHA256WithDSATest()
+        private static void SHA256WithDSASample()
         {
             var keyParameter = DSAKeyGenerator.Generator();
 
@@ -272,7 +280,7 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             Console.WriteLine(verified ? "signature verified" : "signature not verified");
         }
 
-        private static void SHA256WithECDSATest()
+        private static void SHA256WithECDSASample()
         {
             var keyParameter = ECDSAKeyGenerator.Generator();
 

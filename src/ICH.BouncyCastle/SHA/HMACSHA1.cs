@@ -9,8 +9,7 @@ namespace ICH.BouncyCastle
     {
         public static string GeneratorKey()
         {
-            var kGen = GeneratorUtilities.GetKeyGenerator("HMac/SHA1");
-            return Hex.ToHexString(kGen.GenerateKey());
+            return HMAC.GeneratorKey("HMac/SHA1");
         }
 
         public static byte[] Compute(string data, string key)

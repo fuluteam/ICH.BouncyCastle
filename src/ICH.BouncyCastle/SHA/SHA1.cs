@@ -6,34 +6,40 @@ namespace ICH.BouncyCastle
 {
     public class SHA1
     {
-public static byte[] Compute(string s)
-{
-    if (string.IsNullOrEmpty(s))
-    {
-        throw new ArgumentNullException(nameof(s));
-    }
-    
-    var digest = new Sha256Digest();
-    var resBuf = new byte[digest.GetDigestSize()];
-    var input = Encoding.UTF8.GetBytes(s);
+        /// <summary>
+        /// 哈希计算（使用BouncyCastle）
+        /// </summary>
+        public static byte[] Compute(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                throw new ArgumentNullException(nameof(s));
+            }
 
-    digest.BlockUpdate(input, 0, input.Length);
-    digest.DoFinal(resBuf, 0);
+            var digest = new Sha1Digest();
+            var resBuf = new byte[digest.GetDigestSize()];
+            var input = Encoding.UTF8.GetBytes(s);
 
-    return resBuf;
-}
+            digest.BlockUpdate(input, 0, input.Length);
+            digest.DoFinal(resBuf, 0);
 
-public static byte[] Compute2(string s)
-{
-    if (string.IsNullOrEmpty(s))
-    {
-        throw new ArgumentNullException(nameof(s));
-    }
+            return resBuf;
+        }
 
-    using (var sha1 = System.Security.Cryptography.SHA256.Create())
-    {
-        return sha1.ComputeHash(Encoding.UTF8.GetBytes(s));
-    }
-}
+        /// <summary>
+        /// 哈希计算（不使用BouncyCastle）
+        /// </summary>
+        public static byte[] Compute2(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                throw new ArgumentNullException(nameof(s));
+            }
+
+            using (var sha1 = System.Security.Cryptography.SHA1.Create())
+            {
+                return sha1.ComputeHash(Encoding.UTF8.GetBytes(s));
+            }
+        }
     }
 }

@@ -83,7 +83,7 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             //RSA_ECB_PKCS1Padding();
             //RSA_NONE_PKCS1Padding();
 
-            //MD5_Sample();
+            MD5_Sample();
             //SHA256_Sample();
 
             //HMacSha256_Sample();
@@ -216,18 +216,21 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             var s = "hello md5";
             Console.WriteLine(s);
 
-            var resBytes1 = MD5.Compute("hello md5");
+            var resBytes1 = MD5.Compute(s);
 
-            var resBytes2 = MD5.Compute2("hello md5");
+            var resBytes2 = MD5.Compute2(s);
 
             var a1 = BitConverter.ToString(resBytes1).Replace("-", "");
-            Console.WriteLine($"通过BitConverter.ToString转换得到结果：{a1}");
+            Console.WriteLine("通过BitConverter.ToString转换得到结果：");
+            Console.WriteLine(a1);
             var a2 = Hex.ToHexString(resBytes1).ToUpper();
-            Console.WriteLine($"通过Hex.ToHexString转换得到结果：{a2}");
+            Console.WriteLine("通过Hex.ToHexString转换得到结果：");
+            Console.WriteLine(a2);
 
             var a3 = Hex.ToHexString(resBytes2).ToUpper();
 
-            Console.WriteLine($"不使用BouncyCastle得到结果：{a3}");
+            Console.WriteLine("不使用BouncyCastle得到结果：");
+            Console.WriteLine(a3);
 
             Console.WriteLine();
         }

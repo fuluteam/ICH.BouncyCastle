@@ -6,6 +6,9 @@ namespace ICH.BouncyCastle
 {
     public class SHA256
     {
+        /// <summary>
+        /// 哈希计算（使用BouncyCastle）
+        /// </summary>
         public static byte[] Compute1(string s)
         {
             if (string.IsNullOrEmpty(s))
@@ -22,6 +25,9 @@ namespace ICH.BouncyCastle
             return resBuf;
         }
 
+        /// <summary>
+        /// 哈希计算（不使用BouncyCastle）
+        /// </summary>
         public static byte[] Compute2(string s)
         {
             if (string.IsNullOrEmpty(s))

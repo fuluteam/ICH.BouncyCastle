@@ -7,6 +7,11 @@ namespace ICH.BouncyCastle
 {
     public static class MD5
     {
+        /// <summary>
+        /// 哈希计算（使用BouncyCastle）
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public static byte[] Compute(string s)
         {
             if (string.IsNullOrEmpty(s))
@@ -23,7 +28,11 @@ namespace ICH.BouncyCastle
             return resBuf;
         }
 
-
+        /// <summary>
+        /// 哈希计算（不使用BouncyCastle）
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public static byte[] Compute2(string s)
         {
             if (string.IsNullOrEmpty(s))

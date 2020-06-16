@@ -8,6 +8,9 @@ namespace ICH.BouncyCastle
 {
     public class SHA1WithECDSA
     {
+        /// <summary>
+        /// 生成签名
+        /// </summary>
         public static string GenerateSignature(string data, AsymmetricKeyParameter parameter)
         {
             if (string.IsNullOrEmpty(data))
@@ -27,6 +30,9 @@ namespace ICH.BouncyCastle
             return Base64.ToBase64String(signer.GenerateSignature());
         }
 
+        /// <summary>
+        /// 验证签名
+        /// </summary>
         public static bool VerifySignature(string data, string sign, AsymmetricKeyParameter parameter)
         {
             if (string.IsNullOrEmpty(data))

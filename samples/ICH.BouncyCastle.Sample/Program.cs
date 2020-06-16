@@ -83,16 +83,19 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             //RSA_ECB_PKCS1Padding();
             //RSA_NONE_PKCS1Padding();
 
-            //MD5Sample();
-            SHA256Sample();
+            //MD5_Sample();
+            //SHA256_Sample();
 
-            //HMacSha1Sample();
+            //HMacSha256_Sample();
 
+            //SHA1WithDSA_Sample();
 
-            //SHA1WithDSASample();
+            //SHA256WithDSA_Sample();
 
-            //SHA256WithDSASample();
-            //SHA256WithECDSASample();
+            //SHA256WithECDSA_Sample();
+
+            //SHA256WithRSA_Sample();
+
             Console.ReadLine();
         }
 
@@ -208,7 +211,7 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
         }
 
 
-        private static void MD5Sample()
+        private static void MD5_Sample()
         {
             var s = "hello md5";
             Console.WriteLine(s);
@@ -229,28 +232,43 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             Console.WriteLine();
         }
 
-        private static void SHA256Sample()
+        private static void SHA256_Sample()
         {
             var s = "hello sha-256";
             Console.WriteLine(s);
 
-            Console.WriteLine($"使用BouncyCastle计算结果（转Base64字符串）：{Base64.ToBase64String(SHA256.Compute1(s))}");
-
-            Console.WriteLine($"不使用BouncyCastle计算结果（转Base64字符串）：{Base64.ToBase64String(SHA256.Compute2(s))}");
+            Console.WriteLine("使用BouncyCastle计算结果（转Base64字符串）：");
+            Console.WriteLine(Base64.ToBase64String(SHA256.Compute1(s)));
+            Console.WriteLine();
+            Console.WriteLine("不使用BouncyCastle计算结果（转Base64字符串）：");
+            Console.WriteLine(Base64.ToBase64String(SHA256.Compute2(s)));
         }
 
-        private static void HMacSha256Sample()
+        private static void HMacSha256_Sample()
         {
             var s = "hello hmac sha256";
+            Console.WriteLine(s);
             var k = HMACSHA256.GeneratorKey();
+            Console.WriteLine("密钥（十六进制字符串）：");
+            Console.WriteLine(Hex.ToHexString(k));
+            Console.WriteLine("密钥（Base64字符串）：");
+            Console.WriteLine(Base64.ToBase64String(k));
+            Console.WriteLine();
+            var b1 = HMACSHA256.Compute(s, k);
+            Console.WriteLine("使用BouncyCastle计算结果（转Base64字符串）：");
+            Console.WriteLine(Base64.ToBase64String(b1));
+            Console.WriteLine("使用BouncyCastle计算结果（转十六进制字符串）：");
+            Console.WriteLine(Hex.ToHexString(b1));
+            Console.WriteLine();
+            var b2 = HMACSHA256.Compute2(s, k);
 
-            Console.WriteLine(Base64.ToBase64String(HMACSHA256.Compute(s, k)));
-
-            Console.WriteLine(Base64.ToBase64String(HMACSHA256.Compute2(s, k)));
-
+            Console.WriteLine("不使用BouncyCastle计算结果（转Base64字符串）：");
+            Console.WriteLine(Base64.ToBase64String(b2));
+            Console.WriteLine("不使用BouncyCastle计算结果（转十六进制字符串）：");
+            Console.WriteLine(Hex.ToHexString(b2));
         }
 
-        private static void SHA1WithDSASample()
+        private static void SHA1WithDSA_Sample()
         {
             var keyParameter = DSAKeyGenerator.Generator();
 
@@ -265,38 +283,97 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             Console.WriteLine(verified ? "signature verified" : "signature not verified");
         }
 
-        private static void SHA256WithDSASample()
+        private static void SHA256WithDSA_Sample()
         {
+            var s = "hello dsa";
+            Console.WriteLine(s);
             var keyParameter = DSAKeyGenerator.Generator();
 
-            var sign = SHA256WithDSA.GenerateSignature("hello dsa",
+            Console.WriteLine("私钥：");
+            Console.WriteLine(keyParameter.PrivateKey);
+            Console.WriteLine("公钥：");
+            Console.WriteLine(keyParameter.PublicKey);
+
+            Console.WriteLine();
+
+            var sign = SHA256WithDSA.GenerateSignature(s,
                 RSAUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(keyParameter.PrivateKey));
 
             Console.WriteLine($"sign:{sign}");
 
-            var verified = SHA256WithDSA.VerifySignature("hello dsa", sign,
+            var verified = SHA256WithDSA.VerifySignature(s, sign,
                 RSAUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
 
+            Console.WriteLine("验证结果：");
             Console.WriteLine(verified ? "signature verified" : "signature not verified");
         }
 
-        private static void SHA256WithECDSASample()
+        private static void SHA256WithECDSA_Sample()
         {
+            var s = "hello ec dsa";
+            Console.WriteLine(s);
             var keyParameter = ECDSAKeyGenerator.Generator();
 
-            Console.WriteLine($"PrivateKey：{keyParameter.PrivateKey}");
+            Console.WriteLine("私钥：");
+            Console.WriteLine(keyParameter.PrivateKey);
+            Console.WriteLine("公钥：");
+            Console.WriteLine(keyParameter.PublicKey);
 
-            Console.WriteLine($"PublicKey：{keyParameter.PublicKey}");
-
-            var sign = SHA256WithECDSA.GenerateSignature("hello ec dsa",
+            var sign = SHA256WithECDSA.GenerateSignature(s,
                 RSAUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(keyParameter.PrivateKey));
 
             Console.WriteLine($"sign:{sign}");
 
-            var verified = SHA256WithECDSA.VerifySignature("hello ec dsa", sign,
+            var verified = SHA256WithECDSA.VerifySignature(s, sign,
                 RSAUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
 
+            Console.WriteLine("验证结果：");
             Console.WriteLine(verified ? "signature verified" : "signature not verified");
+        }
+
+        private static void SHA256WithRSA_Sample()
+        {
+            var s = "hello sha256 with rsa";
+            Console.WriteLine(s);
+
+            var keyParameter = RSAKeyGenerator.Pkcs8(2048);
+
+            Console.WriteLine("私钥：");
+            Console.WriteLine(keyParameter.PrivateKey);
+            Console.WriteLine("公钥：");
+            Console.WriteLine(keyParameter.PublicKey);
+
+            Console.WriteLine();
+
+            Console.WriteLine("使用BouncyCastle：");
+
+            var sign1 = SHA256WithRSA.GenerateSignature(s,
+                 RSAUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(keyParameter.PrivateKey));
+            Console.WriteLine("sign1：");
+            Console.WriteLine(sign1);
+
+            var verified1 = SHA256WithRSA.VerifySignature(s, sign1,
+                RSAUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
+
+            Console.WriteLine("验证结果：");
+            Console.WriteLine(verified1 ? "signature verified" : "signature not verified");
+            Console.WriteLine();
+
+            Console.WriteLine("不使用BouncyCastle：");
+
+            var sign2 = SHA256WithRSA.GenerateSignature(s,
+                RSAUtilities.GetRsaParametersFormAsn1PrivateKey(keyParameter.PrivateKey));
+
+            Console.WriteLine("sign2：");
+            Console.WriteLine(sign2);
+
+            var verified2 = SHA256WithRSA.VerifySignature(s, sign1,
+                RSAUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
+
+            Console.WriteLine("验证结果：");
+
+            Console.WriteLine(verified2 ? "signature verified" : "signature not verified");
+            Console.WriteLine();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace ICH.BouncyCastle.DSA
     public class ECDSAKeyGenerator
     {
         /// <summary>
-        /// 基于椭圆曲线secp256k1生成的ECDSA密钥对
+        /// 生成ECDSA密钥对（secp256k1是比特币椭圆曲线）
         /// </summary>
         /// <returns></returns>
         public static KeyParameter Generator()

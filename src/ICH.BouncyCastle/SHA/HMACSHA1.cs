@@ -1,48 +1,43 @@
 ﻿using System;
 using System.Text;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Utilities.Encoders;
 
 namespace ICH.BouncyCastle
 {
-    public class HMACSHA1
+public class HMACSHA1
+{
+    /// <summary>
+    /// 生成密钥KEY
+    /// </summary>
+    /// <returns></returns>
+    public static byte[] GeneratorKey()
     {
-        public static string GeneratorKey()
+        return HMAC.GeneratorKey(Algorithms.HMacSHA1);
+    }
+
+    /// <summary>
+    /// 哈希计算（使用BouncyCastle）
+    /// </summary>
+    public static byte[] Compute(string data, byte[] key)
+    {
+        return HMAC.Compute(data, key, Algorithms.HMacSHA1);
+        //or
+        //return HMAC.Compute(data, key, new Sha1Digest());
+    }
+
+    /// <summary>
+    /// 哈希计算（不使用BouncyCastle）
+    /// </summary>
+    public static byte[] Compute2(string data, byte[] key)
+    {
+        if (string.IsNullOrEmpty(data))
         {
-            return HMAC.GeneratorKey("HMac/SHA1");
+            throw new ArgumentNullException(nameof(data));
         }
 
-        public static byte[] Compute(string data, string key)
+        using (var hmacSha1 = new System.Security.Cryptography.HMACSHA1(key))
         {
-
-            return HMAC.Compute(data, key, "HMac/SHA1");
-
-            //or
-            //return HMAC.Compute(data, key, new Sha1Digest());
-        }
-
-        /// <summary>
-        /// 不使用BouncyCastle的写法
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static byte[] Compute2(string data, string key)
-        {
-            if (string.IsNullOrEmpty(data))
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            if (string.IsNullOrEmpty(key))
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
-
-            using (var hmacSha1 = new System.Security.Cryptography.HMACSHA1(Encoding.UTF8.GetBytes(key)))
-            {
-                return hmacSha1.ComputeHash(Encoding.UTF8.GetBytes(data));
-            }
+            return hmacSha1.ComputeHash(Encoding.UTF8.GetBytes(data));
         }
     }
+}
 }

@@ -11,7 +11,7 @@ namespace ICH.BouncyCastle
 {
     public class RSAKeyGenerator
     {
-        public KeyParameter Pkcs1(int keySize, bool format=false)
+        public static KeyParameter Pkcs1(int keySize, bool format=false)
         {
             var keyGenerator = GeneratorUtilities.GetKeyPairGenerator("RSA");
             keyGenerator.Init(new KeyGenerationParameters(new SecureRandom(), keySize));
@@ -50,7 +50,7 @@ namespace ICH.BouncyCastle
             return rsaKey;
         }
 
-        public KeyParameter Pkcs8(int keySize, bool format=false)
+        public static KeyParameter Pkcs8(int keySize, bool format=false)
         {
             var keyGenerator = GeneratorUtilities.GetKeyPairGenerator("RSA");
             keyGenerator.Init(new KeyGenerationParameters(new SecureRandom(), keySize));

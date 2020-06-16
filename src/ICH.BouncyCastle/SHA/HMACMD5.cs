@@ -1,49 +1,49 @@
 ﻿using System;
 using System.Text;
 using Org.BouncyCastle.Crypto.Digests;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Utilities.Encoders;
 
 namespace ICH.BouncyCastle
 {
-    public class HMACMD5
-    {
-public static string GeneratorKey()
+public class HMACMD5
 {
-    return HMAC.GeneratorKey("HMAC-MD5");
-}
-
-public static byte[] Compute(string data, string key)
-{
-
-    return HMAC.Compute(data, key, "HMAC-MD5");
-
-    //or
-    return HMAC.Compute(data, key, new MD5Digest());
-}
-
-/// <summary>
-/// 不使用BouncyCastle的写法
-/// </summary>
-/// <param name="data"></param>
-/// <param name="key"></param>
-/// <returns></returns>
-public static byte[] Compute2(string data, string key)
-{
-    if (string.IsNullOrEmpty(data))
+    /// <summary>
+    /// 生成密钥KEY
+    /// </summary>
+    /// <returns></returns>
+    public static byte[] GeneratorKey()
     {
-        throw new ArgumentNullException(nameof(data));
+        return HMAC.GeneratorKey(Algorithms.HMacMD5);
     }
 
-    if (string.IsNullOrEmpty(key))
+    /// <summary>
+    /// 哈希计算（使用BouncyCastle）
+    /// </summary>
+    public static byte[] Compute(string data, byte[] key)
     {
-        throw new ArgumentNullException(nameof(key));
+        return HMAC.Compute(data, key, Algorithms.HMacMD5);
+        //or
+        //return HMAC.Compute(data, key, new MD5Digest());
     }
 
-    using (var hmacMd5 = new System.Security.Cryptography.HMACMD5(Encoding.UTF8.GetBytes(key)))
+    /// <summary>
+    /// 哈希计算（不使用BouncyCastle）
+    /// </summary>
+    public static byte[] Compute2(string data, string key)
     {
-        return hmacMd5.ComputeHash(Encoding.UTF8.GetBytes(data));
+        if (string.IsNullOrEmpty(data))
+        {
+            throw new ArgumentNullException(nameof(data));
+        }
+
+        if (string.IsNullOrEmpty(key))
+        {
+            throw new ArgumentNullException(nameof(key));
+        }
+
+        using (var hmacMd5 = new System.Security.Cryptography.HMACMD5(Encoding.UTF8.GetBytes(key)))
+        {
+            return hmacMd5.ComputeHash(Encoding.UTF8.GetBytes(data));
+        }
     }
 }
-    }
 }

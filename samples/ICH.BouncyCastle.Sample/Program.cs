@@ -4,6 +4,10 @@ using System.Reflection.Metadata;
 using System.Text;
 using ICH.BouncyCastle;
 using ICH.BouncyCastle.DSA;
+using ICH.BouncyCastle.SM;
+using ICH.BouncyCastle.Symmetry;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Encoders;
 using RSA = ICH.BouncyCastle.RSA;
 
@@ -83,7 +87,7 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             //RSA_ECB_PKCS1Padding();
             //RSA_NONE_PKCS1Padding();
 
-            MD5_Sample();
+            //MD5_Sample();
             //SHA256_Sample();
 
             //HMacSha256_Sample();
@@ -96,9 +100,47 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
 
             //SHA256WithRSA_Sample();
 
+            //SM2_Sample();
+
+            AES_Sample();
+
             Console.ReadLine();
         }
 
+        private static void AES_Sample()
+        {
+            var keyBytes = AES.GenerateKey("123abc", "SHA1PRNG");
+
+            var keyStr = Base64.ToBase64String(keyBytes);
+
+            //keyStr = "NiB1SpY+yz1ylgl/naAMHw==";
+
+            var content = "123abc爱奇艺";
+
+
+            var cipherText = Base64.ToBase64String(AES.Encrypt(Strings.ToUtf8ByteArray(content), Base64.Decode(keyStr), null, Algorithms.AES_CBC_PKCS7Padding));
+
+            var originalText = Strings.FromUtf8ByteArray(AES.Decrypt(Base64.Decode(cipherText), Base64.Decode(keyStr), null, Algorithms.AES_ECB_PKCS7Padding));
+
+        }
+
+        private static void SM2_Sample()
+        {
+            var sm2Engine = new SM2();
+
+            var parameter = sm2Engine.KeyGenerator();
+
+            var pub = AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPublicKey(parameter.PublicKey);
+            var priv = AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(parameter.PrivateKey);
+
+            var p = sm2Engine.Encrypt("hello sm2", (ECPublicKeyParameters)pub);
+
+
+            var decStr = sm2Engine.Decrypt(p, (ECPrivateKeyParameters)priv);
+
+            Console.WriteLine(decStr);
+
+        }
 
         private static void RSA_KEY_Converter()
         {
@@ -155,14 +197,14 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
 
             // rsa pkcs8 private key encrypt
             //algorithm  rsa/ecb/pkcs1padding
-            var pkcs8data = RSA.EncryptToBase64(data, RSAUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(pkcs8_1024_private_key), Algorithms.RSA_ECB_PKCS1Padding);
+            var pkcs8data = RSA.EncryptToBase64(data, AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(pkcs8_1024_private_key), Algorithms.RSA_ECB_PKCS1Padding);
 
             Console.WriteLine("密钥格式：pkcs8，密文算法：rsa/ecb/pkcs1padding，加密结果");
             Console.WriteLine(pkcs8data);
 
             //rsa pkcs1 private key encrypt
             //algorithm  rsa/ecb/pkcs1padding
-            var pkcs1data = RSA.EncryptToBase64(data, RSAUtilities.GetAsymmetricKeyParameterFormPrivateKey(pkcs1_1024_private_key), Algorithms.RSA_ECB_PKCS1Padding);
+            var pkcs1data = RSA.EncryptToBase64(data, AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPrivateKey(pkcs1_1024_private_key), Algorithms.RSA_ECB_PKCS1Padding);
 
             Console.WriteLine($"密钥格式：pkcs1，密文算法：rsa/ecb/pkcs1padding");
             Console.WriteLine(pkcs1data);
@@ -177,7 +219,19 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             Console.WriteLine("使用公钥解密数据：");
             //rsa public key decrypt
             //algorithm  rsa/ecb/pkcs1padding
-            Console.WriteLine(RSA.DecryptFromBase64(pkcs1data, RSAUtilities.GetAsymmetricKeyParameterFormPublicKey(_1024_public_key), Algorithms.RSA_ECB_PKCS1Padding));
+            Console.WriteLine(RSA.DecryptFromBase64(pkcs1data, AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPublicKey(_1024_public_key), Algorithms.RSA_ECB_PKCS1Padding));
+
+
+            Console.WriteLine("使用公钥加密：");
+
+            var encrydata = RSA.EncryptToBase64(data,
+                 AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPublicKey(_1024_public_key), Algorithms.RSA_ECB_PKCS1Padding);
+
+            Console.WriteLine("使用私钥解密");
+            var datares = RSA.DecryptFromBase64(encrydata,
+                AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPrivateKey(pkcs1_1024_private_key), Algorithms.RSA_ECB_PKCS1Padding);
+
+            Console.WriteLine($"解密结果比对是否一致：{data.Equals(datares)}");
 
             Console.WriteLine();
         }
@@ -187,14 +241,14 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             var data = "RSA_NONE_PKCS1Padding";
 
             //rsa pkcs1 private key encrypt
-            var encryptdata1 = RSA.EncryptToBase64(data, RSAUtilities.GetAsymmetricKeyParameterFormPrivateKey(pkcs1_1024_private_key),
+            var encryptdata1 = RSA.EncryptToBase64(data, AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPrivateKey(pkcs1_1024_private_key),
                 Algorithms.RSA_NONE_PKCS1Padding);
             Console.WriteLine(encryptdata1);
 
             //rsa pkcs1 private key encrypt
             //algorithm  rsa/none/pkcs1padding
             var encryptdata2 = RSA.EncryptToBase64(data,
-                RSAUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(pkcs8_1024_private_key),
+                AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(pkcs8_1024_private_key),
                 Algorithms.RSA_NONE_PKCS1Padding);
 
             Console.WriteLine(encryptdata2);
@@ -205,7 +259,7 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
 
             //rsa public key decrypt
             //algorithm  rsa/none/pkcs1padding
-            Console.WriteLine(RSA.DecryptFromBase64(encryptdata2, RSAUtilities.GetAsymmetricKeyParameterFormPublicKey(_1024_public_key), Algorithms.RSA_NONE_PKCS1Padding));
+            Console.WriteLine(RSA.DecryptFromBase64(encryptdata2, AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPublicKey(_1024_public_key), Algorithms.RSA_NONE_PKCS1Padding));
 
             Console.WriteLine();
         }
@@ -276,12 +330,12 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             var keyParameter = DSAKeyGenerator.Generator();
 
             var sign = SHA1WithDSA.GenerateSignature("hello dsa",
-                   RSAUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(keyParameter.PrivateKey));
+                   AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(keyParameter.PrivateKey));
 
             Console.WriteLine($"sign:{sign}");
 
             var verified = SHA1WithDSA.VerifySignature("hello dsa", sign,
-                 RSAUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
+                 AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
 
             Console.WriteLine(verified ? "signature verified" : "signature not verified");
         }
@@ -300,12 +354,12 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             Console.WriteLine();
 
             var sign = SHA256WithDSA.GenerateSignature(s,
-                RSAUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(keyParameter.PrivateKey));
+                AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(keyParameter.PrivateKey));
 
             Console.WriteLine($"sign:{sign}");
 
             var verified = SHA256WithDSA.VerifySignature(s, sign,
-                RSAUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
+                AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
 
             Console.WriteLine("验证结果：");
             Console.WriteLine(verified ? "signature verified" : "signature not verified");
@@ -323,12 +377,12 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             Console.WriteLine(keyParameter.PublicKey);
 
             var sign = SHA256WithECDSA.GenerateSignature(s,
-                RSAUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(keyParameter.PrivateKey));
+                AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(keyParameter.PrivateKey));
 
             Console.WriteLine($"sign:{sign}");
 
             var verified = SHA256WithECDSA.VerifySignature(s, sign,
-                RSAUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
+                AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
 
             Console.WriteLine("验证结果：");
             Console.WriteLine(verified ? "signature verified" : "signature not verified");
@@ -351,12 +405,12 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             Console.WriteLine("使用BouncyCastle：");
 
             var sign1 = SHA256WithRSA.GenerateSignature(s,
-                 RSAUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(keyParameter.PrivateKey));
+                 AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(keyParameter.PrivateKey));
             Console.WriteLine("sign1：");
             Console.WriteLine(sign1);
 
             var verified1 = SHA256WithRSA.VerifySignature(s, sign1,
-                RSAUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
+                AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
 
             Console.WriteLine("验证结果：");
             Console.WriteLine(verified1 ? "signature verified" : "signature not verified");
@@ -365,13 +419,13 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             Console.WriteLine("不使用BouncyCastle：");
 
             var sign2 = SHA256WithRSA.GenerateSignature(s,
-                RSAUtilities.GetRsaParametersFormAsn1PrivateKey(keyParameter.PrivateKey));
+                AsymmetricKeyUtilities.GetRsaParametersFormAsn1PrivateKey(keyParameter.PrivateKey));
 
             Console.WriteLine("sign2：");
             Console.WriteLine(sign2);
 
             var verified2 = SHA256WithRSA.VerifySignature(s, sign1,
-                RSAUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
+                AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPublicKey(keyParameter.PublicKey));
 
             Console.WriteLine("验证结果：");
 

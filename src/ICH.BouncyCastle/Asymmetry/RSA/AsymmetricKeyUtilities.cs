@@ -13,7 +13,7 @@ namespace ICH.BouncyCastle
     /// <summary>
     /// 
     /// </summary>
-    public class RSAUtilities
+    public class AsymmetricKeyUtilities
     {
         /// <summary>
         /// -----BEGIN RSA PRIVATE KEY-----

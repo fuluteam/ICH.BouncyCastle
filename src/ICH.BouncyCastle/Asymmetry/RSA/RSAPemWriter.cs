@@ -15,7 +15,7 @@ namespace ICH.BouncyCastle
                 return privateKey;
             }
 
-            var akp = RSAUtilities.GetAsymmetricKeyParameterFormPrivateKey(privateKey);
+            var akp = AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPrivateKey(privateKey);
             using (var sw = new StringWriter())
             {
                 var pWrt = new PemWriter(sw);
@@ -32,7 +32,7 @@ namespace ICH.BouncyCastle
                 return privateKey;
             }
 
-            var akp = RSAUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(privateKey);
+            var akp = AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(privateKey);
 
             using (var sw = new StringWriter())
             {
@@ -50,7 +50,7 @@ namespace ICH.BouncyCastle
             {
                 return publicKey;
             }
-            var akp = RSAUtilities.GetAsymmetricKeyParameterFormPublicKey(publicKey);
+            var akp = AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPublicKey(publicKey);
             using (var sw = new StringWriter())
             {
                 var pWrt = new PemWriter(sw);

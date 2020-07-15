@@ -23,7 +23,7 @@ namespace ICH.BouncyCastle
         /// <returns></returns>
         public static string PrivateKeyPkcs1ToPkcs8(string privateKey, bool format = false)
         {
-            var akp = RSAUtilities.GetAsymmetricKeyParameterFormPrivateKey(privateKey);
+            var akp = AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPrivateKey(privateKey);
             if (format)
             {
                 var sw = new StringWriter();
@@ -48,7 +48,7 @@ namespace ICH.BouncyCastle
         /// <returns></returns>
         public static string PrivateKeyPkcs8ToPkcs1(string privateKey, bool format = false)
         {
-            var akp = RSAUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(privateKey);
+            var akp = AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormAsn1PrivateKey(privateKey);
             if (format)
             {
                 var sw = new StringWriter();

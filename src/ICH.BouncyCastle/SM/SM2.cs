@@ -51,6 +51,8 @@ namespace ICH.BouncyCastle.SM
             var subjectPublicKeyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(aKp.Public);
             var privateKeyInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(aKp.Private);
 
+            var pk =Hex.ToHexString(privateKeyInfo.GetEncoded());
+
             return new KeyParameter
             {
                 PrivateKey = Base64.ToBase64String(privateKeyInfo.GetEncoded()),

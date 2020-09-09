@@ -43,35 +43,64 @@ namespace ICH.BouncyCastle
         public const string AES_CTR_ISO10126Padding = "AES/CTR/ISO10126Padding";
 
         public const string DES_CBC_NoPadding = "DES/CBC/NoPadding";
-        public const string DES_CBC_PKCS5Padding = "DES/CBC/PKCS5Padding";
+        public const string DES_CBC_PKCS7Padding = "DES/CBC/PKCS7Padding";
+        public const string DES_CBC_ZerosPadding = "DES/CBC/ZerosPadding";
+        public const string DES_CBC_ANSIX923Padding = "DES/CBC/ANSIX923Padding";
         public const string DES_CBC_ISO10126Padding = "DES/CBC/ISO10126Padding";
-        public const string DES_CBC_ISO7816_4Padding = "DES/CBC/ISO7816-4Padding";
-        public const string DES_CBC_X923Padding = "DES/CBC/X9.23Padding";
-        public const string DES_CBC_ZeroBytePadding="DES/CBC/ZeroBytePadding";
-        public const string DES_CTS_NoPadding="DES/CTS/NoPadding";
-        public const string DES_CBC_WithCTS="DES/CBC/WithCTS";
-        public const string DES_OFB_NoPadding="DES/OFB/NoPadding";
-        public const string DES_OFB8_NoPadding= "DES/OFB8/NoPadding";
-        public const string DES_CFB_NoPadding="DES/CFB/NoPadding";
-        public const string DES_CFB8_NoPadding="DES/CFB8/NoPadding";
-        public const string DES_CTR_NoPadding = "DES/CTR/NoPadding";
-        public const string DES_EAX_NoPadding="DES/EAX/NoPadding";
-        public const string DES_ECB_TBCPadding="DES/ECB/TBCPadding";
-        public const string DES_CBC_TBCPadding="DES/CBC/TBCPadding";
-        public const string DES_OFB64_NoPadding="DES/OFB64/NoPadding";
-        public const string DES_CFB64_NoPadding="DES/CFB64/NoPadding";
 
+        public const string DES_ECB_NoPadding = "DES/ECB/NoPadding";
+        public const string DES_ECB_PKCS7Padding = "DES/ECB/PKCS7Padding";
+        public const string DES_ECB_ZerosPadding = "DES/ECB/ZerosPadding";
+        public const string DES_ECB_ANSIX923Padding = "DES/ECB/ANSIX923Padding";
+        public const string DES_ECB_ISO10126Padding = "DES/ECB/ISO10126Padding";
 
-        public const string DESede_CBC_WithCTS= "DESede/CBC/WithCTS";
-        public const string DESede_CTS_NoPadding="DESede/CTS/NoPadding";
+        public const string DES_OFB_NoPadding = "DES/OFB/NoPadding";
+        public const string DES_OFB_PKCS7Padding = "DES/OFB/PKCS7Padding";
+        public const string DES_OFB_ZerosPadding = "DES/OFB/ZerosPadding";
+        public const string DES_OFB_ANSIX923Padding = "DES/OFB/ANSIX923Padding";
+        public const string DES_OFB_ISO10126Padding = "DES/OFB/ISO10126Padding";
+
+        public const string DES_CFB_NoPadding = "DES/CFB/NoPadding";
+        public const string DES_CFB_PKCS7Padding = "DES/CFB/PKCS7Padding";
+        public const string DES_CFB_ZerosPadding = "DES/CFB/ZerosPadding";
+        public const string DES_CFB_ANSIX923Padding = "DES/CFB/ANSIX923Padding";
+        public const string DES_CFB_ISO10126Padding = "DES/CFB/ISO10126Padding";
+
+        public const string DES_CTS_NoPadding = "DES/CTS/NoPadding";
+        public const string DES_CTS_PKCS7Padding = "DES/CTS/PKCS7Padding";
+        public const string DES_CTS_ZerosPadding = "DES/CTS/ZerosPadding";
+        public const string DES_CTS_ANSIX923Padding = "DES/CTS/ANSIX923Padding";
+        public const string DES_CTS_ISO10126Padding = "DES/CTS/ISO10126Padding";
+
         public const string DESede_CBC_NoPadding = "DESede/CBC/NoPadding";
         public const string DESede_CBC_PKCS7Padding = "DESede/CBC/PKCS7Padding";
-        public const string DESede_OFB_NoPadding="DESede/OFB/NoPadding";
-        public const string DESede_OFB8_NoPadding= "DESede/OFB8/NoPadding";
-        public const string DESede_CFB_NoPadding="DESede/CFB/NoPadding";
-        public const string DESede_CFB8_NoPadding="DESede/CFB8/NoPadding";
-        public const string DESede_CTR_NoPadding="DESede/CTR/NoPadding";
-        public const string DESede_EAX_NoPadding="DESede/EAX/NoPadding";
+        public const string DESede_CBC_ZerosPadding = "DESede/CBC/ZerosPadding";
+        public const string DESede_CBC_ANSIX923Padding = "DESede/CBC/ANSIX923Padding";
+        public const string DESede_CBC_ISO10126Padding = "DESede/CBC/ISO10126Padding";
+
+        public const string DESede_ECB_NoPadding = "DESede/ECB/NoPadding";
+        public const string DESede_ECB_PKCS7Padding = "DESede/ECB/PKCS7Padding";
+        public const string DESede_ECB_ZerosPadding = "DESede/ECB/ZerosPadding";
+        public const string DESede_ECB_ANSIX923Padding = "DESede/ECB/ANSIX923Padding";
+        public const string DESede_ECB_ISO10126Padding = "DESede/ECB/ISO10126Padding";
+
+        public const string DESede_OFB_NoPadding = "DESede/OFB/NoPadding";
+        public const string DESede_OFB_PKCS7Padding = "DESede/OFB/PKCS7Padding";
+        public const string DESede_OFB_ZerosPadding = "DESede/OFB/ZerosPadding";
+        public const string DESede_OFB_ANSIX923Padding = "DESede/OFB/ANSIX923Padding";
+        public const string DESede_OFB_ISO10126Padding = "DESede/OFB/ISO10126Padding";
+
+        public const string DESede_CFB_NoPadding = "DESede/CFB/NoPadding";
+        public const string DESede_CFB_PKCS7Padding = "DESede/CFB/PKCS7Padding";
+        public const string DESede_CFB_ZerosPadding = "DESede/CFB/ZerosPadding";
+        public const string DESede_CFB_ANSIX923Padding = "DESede/CFB/ANSIX923Padding";
+        public const string DESede_CFB_ISO10126Padding = "DESede/CFB/ISO10126Padding";
+
+        public const string DESede_CTS_NoPadding = "DESede/CTS/NoPadding";
+        public const string DESede_CTS_PKCS7Padding = "DESede/CTS/PKCS7Padding";
+        public const string DESede_CTS_ZerosPadding = "DESede/CTS/ZerosPadding";
+        public const string DESede_CTS_ANSIX923Padding = "DESede/CTS/ANSIX923Padding";
+        public const string DESede_CTS_ISO10126Padding = "DESede/CTS/ISO10126Padding";
 
         public static string SM4_ECB_PKCS7Padding = "SM4/ECB/PKCS7Padding";
         public static string SM4_ECB_NoPadding = "SM4/ECB/NoPadding";

@@ -5,6 +5,7 @@ using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Utilities.Encoders;
 
@@ -75,6 +76,7 @@ namespace ICH.BouncyCastle
             }
 
             var instance = RsaPrivateKeyStructure.GetInstance(Base64.Decode(privateKey));
+
             return new RSAParameters
             {
                 D = instance.PrivateExponent.ToByteArrayUnsigned(),
@@ -98,7 +100,7 @@ namespace ICH.BouncyCastle
         public static RSAParameters GetRsaParametersFormAsn1PrivateKey(string privateKey)
         {
             var keyInfo = PrivateKeyInfo.GetInstance(Asn1Object.FromByteArray(Base64.Decode(privateKey)));
-            
+
             var instance = RsaPrivateKeyStructure.GetInstance(keyInfo.ParsePrivateKey());
 
             return new RSAParameters

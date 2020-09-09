@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Security.Cryptography;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
@@ -11,16 +14,16 @@ namespace ICH.BouncyCastle
 {
     public class RSAKeyGenerator
     {
-        public static KeyParameter Pkcs1(int keySize, bool format=false)
+        public static KeyParameter Pkcs1(int keySize, bool format = false)
         {
             var keyGenerator = GeneratorUtilities.GetKeyPairGenerator("RSA");
             keyGenerator.Init(new KeyGenerationParameters(new SecureRandom(), keySize));
-        
+
             var keyPair = keyGenerator.GenerateKeyPair();
 
             var subjectPublicKeyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair.Public);
             var privateKeyInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair.Private);
-            
+
             if (!format)
             {
                 return new KeyParameter
@@ -50,7 +53,7 @@ namespace ICH.BouncyCastle
             return rsaKey;
         }
 
-        public static KeyParameter Pkcs8(int keySize, bool format=false)
+        public static KeyParameter Pkcs8(int keySize, bool format = false)
         {
             var keyGenerator = GeneratorUtilities.GetKeyPairGenerator("RSA");
             keyGenerator.Init(new KeyGenerationParameters(new SecureRandom(), keySize));

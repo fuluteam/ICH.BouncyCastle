@@ -1,18 +1,27 @@
 ﻿using System;
 using System.IO;
 using System.Reflection.Metadata;
+using System.Security.Cryptography;
 using System.Text;
+using System.Xml;
 using ICH.BouncyCastle;
 using ICH.BouncyCastle.DSA;
 using ICH.BouncyCastle.SM;
 using ICH.BouncyCastle.Symmetry;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Encoders;
+using DES = ICH.BouncyCastle.Symmetry.DES;
+using HMACSHA256 = ICH.BouncyCastle.HMACSHA256;
+using MD5 = ICH.BouncyCastle.MD5;
 using RSA = ICH.BouncyCastle.RSA;
+using SHA256 = ICH.BouncyCastle.SHA256;
+using TripleDES = ICH.BouncyCastle.Symmetry.TripleDES;
 
 namespace ICH.Security.ConsoleApp
 {
+
     class Program
     {
         #region pkcs8_1024_private_key
@@ -102,26 +111,103 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
 
             //SM2_Sample();
 
-            AES_Sample();
+            //AES_Sample();
+
+            //DES_Sample();
+
+            //TripleDES_Sample();
 
             Console.ReadLine();
         }
 
         private static void AES_Sample()
         {
-            var keyBytes = AES.GenerateKey("123abc", "SHA1PRNG");
+            Console.WriteLine("加密算法：AES，加密模式：CBC，填充：PKCS7Padding，字符集：utf8 ");
 
-            var keyStr = Base64.ToBase64String(keyBytes);
+            var keyBytes = AES.GenerateKey();
 
-            //keyStr = "NiB1SpY+yz1ylgl/naAMHw==";
+            var keyBase64Str = Base64.ToBase64String(keyBytes);  //key转base64
 
-            var content = "123abc爱奇艺";
+            Console.WriteLine($"密码长度：192bit，密码（转Base64）：{keyBase64Str}");
 
+            var ivStr = Str.GenerateRandom(16);
+            var iv = Strings.ToByteArray(ivStr);      //模式为ECB时不支持初始化向量IV
 
-            var cipherText = Base64.ToBase64String(AES.Encrypt(Strings.ToUtf8ByteArray(content), Base64.Decode(keyStr), null, Algorithms.AES_CBC_PKCS7Padding));
+            Console.WriteLine($"初始向量：{ivStr}");
 
-            var originalText = Strings.FromUtf8ByteArray(AES.Decrypt(Base64.Decode(cipherText), Base64.Decode(keyStr), null, Algorithms.AES_ECB_PKCS7Padding));
+            var content = "hello aes";
 
+            Console.WriteLine($"待加密文本：{content}");
+
+            var cipherStr = Base64.ToBase64String(AES.Encrypt(Strings.ToUtf8ByteArray(content), Base64.Decode(keyBase64Str), iv, Algorithms.AES_CBC_PKCS7Padding));
+
+            Console.WriteLine($"加密结果（输出为Base64字符串）：{cipherStr}");
+
+            var originalStr = Strings.FromUtf8ByteArray(AES.Decrypt(Base64.Decode(cipherStr), Base64.Decode(keyBase64Str), iv, Algorithms.AES_CBC_PKCS7Padding));
+
+            Console.WriteLine($"解密结果（输入为Base64字符串）：{originalStr}");
+
+            Console.WriteLine();
+        }
+
+        private static void DES_Sample()
+        {
+            Console.WriteLine("加密算法：DES，加密模式：CBC，填充：PKCS7Padding，字符集：utf8 ");
+
+            var keyBytes = DES.GenerateKey();
+
+            var keyBase64Str = Base64.ToBase64String(keyBytes);  //key转base64
+
+            Console.WriteLine($"密码长度：192bit，密码（转Base64）：{keyBase64Str}");
+
+            var ivStr = Str.GenerateRandom(8);
+            var iv = Strings.ToByteArray(ivStr);      //模式为ECB时不支持初始化向量IV
+
+            Console.WriteLine($"初始向量：{ivStr}");
+
+            var content = "hello des";
+
+            Console.WriteLine($"待加密文本：{content}");
+
+            var cipherStr = Base64.ToBase64String(DES.Encrypt(Strings.ToUtf8ByteArray(content), Base64.Decode(keyBase64Str), iv, Algorithms.DES_CBC_PKCS7Padding));
+
+            Console.WriteLine($"加密结果（输出为Base64字符串）：{cipherStr}");
+
+            var originalStr = Strings.FromUtf8ByteArray(DES.Decrypt(Base64.Decode(cipherStr), Base64.Decode(keyBase64Str), iv, Algorithms.DES_CBC_PKCS7Padding));
+
+            Console.WriteLine($"解密结果（输入为Base64字符串）：{originalStr}");
+
+            Console.WriteLine();
+        }
+
+        private static void TripleDES_Sample()
+        {
+            Console.WriteLine("加密算法：3DES，加密模式：CBC，填充：PKCS7Padding，字符集：utf8 ");
+
+            var keyBytes = TripleDES.GenerateKey(192);
+
+            var keyBase64Str = Base64.ToBase64String(keyBytes);  //key转base64
+
+            Console.WriteLine($"密码长度：192bit，密码（转Base64）：{keyBase64Str}");
+
+            var ivStr = Str.GenerateRandom(8);
+            var iv = Strings.ToByteArray(ivStr);      //模式为ECB时不支持初始化向量IV
+
+            Console.WriteLine($"初始向量：{ivStr}");
+
+            var content = "hello 3des";
+
+            Console.WriteLine($"待加密文本：{content}");
+
+            var cipherStr = Base64.ToBase64String(TripleDES.Encrypt(Strings.ToUtf8ByteArray(content), Base64.Decode(keyBase64Str), iv, Algorithms.DESede_CBC_PKCS7Padding));
+
+            Console.WriteLine($"加密结果（输出为Base64字符串）：{cipherStr}");
+
+            var originalStr = Strings.FromUtf8ByteArray(TripleDES.Decrypt(Base64.Decode(cipherStr), Base64.Decode(keyBase64Str), iv, Algorithms.DESede_CBC_PKCS7Padding));
+
+            Console.WriteLine($"解密结果（输入为Base64字符串）：{originalStr}");
+
+            Console.WriteLine();
         }
 
         private static void SM2_Sample()

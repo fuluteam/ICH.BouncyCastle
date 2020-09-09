@@ -5,11 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Org.BouncyCastle.Utilities;
+using Org.BouncyCastle.Utilities.Encoders;
+using System.Security.Cryptography;
+using System.Linq;
 
 namespace ICH.BouncyCastle.Symmetry
 {
     public class AES
     {
+        /// <summary>
+        /// 生成KEY
+        /// </summary>
+        /// <param name="keySize">128位、192位、256位</param>
+        /// <returns></returns>
         public static byte[] GenerateKey(int keySize = 128)
         {
             var kg = GeneratorUtilities.GetKeyGenerator("AES");
@@ -17,13 +25,20 @@ namespace ICH.BouncyCastle.Symmetry
             return kg.GenerateKey();
         }
 
-        public static byte[] GenerateKey(string seed, string algorithm, int keySize = 128)
+
+        /// <summary>
+        /// 网上流传一种利润SecureRandom输出固定随机值并用这个随机值当做加密密钥的用法
+        /// 这种方式确实可以对原始密钥做一定的隐藏。起到混淆作用。但Google官方否定了该方式的使用。
+        /// </summary>
+        public static byte[] GetKey(string s)
         {
-            var kg = GeneratorUtilities.GetKeyGenerator("AES");
-            var secureRandom = SecureRandom.GetInstance(algorithm);
-            secureRandom.SetSeed(Strings.ToByteArray(seed));
-            kg.Init(new KeyGenerationParameters(secureRandom, keySize));
-            return kg.GenerateKey();
+            using (var st = new SHA1CryptoServiceProvider())
+            {
+                using (var sha1Crypto = new SHA1CryptoServiceProvider())
+                {
+                    return sha1Crypto.ComputeHash(st.ComputeHash(Strings.ToUtf8ByteArray(s))).Take(16).ToArray();
+                }
+            }
         }
 
         /// <summary>

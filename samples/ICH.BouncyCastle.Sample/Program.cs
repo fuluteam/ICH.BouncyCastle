@@ -1,17 +1,25 @@
 ﻿using System;
+using System.Collections;
 using System.IO;
 using System.Reflection.Metadata;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Xml;
 using ICH.BouncyCastle;
+using ICH.BouncyCastle.Asymmetry.RSA;
 using ICH.BouncyCastle.DSA;
 using ICH.BouncyCastle.SM;
 using ICH.BouncyCastle.Symmetry;
+using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Pkcs;
+using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Encoders;
+using Org.BouncyCastle.X509;
 using DES = ICH.BouncyCastle.Symmetry.DES;
 using HMACSHA256 = ICH.BouncyCastle.HMACSHA256;
 using MD5 = ICH.BouncyCastle.MD5;
@@ -117,7 +125,94 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
 
             //TripleDES_Sample();
 
+
+            //Certificate_Sample();
+
             Console.ReadLine();
+        }
+
+        private static void Certificate_Sample()
+        {
+            var algorithm = "RSA";
+            var keySize = 1024;
+
+            //颁发者DN
+            var issuer = new X509Name(new ArrayList
+            {
+                X509Name.C,
+                X509Name.O,
+                X509Name.OU,
+                X509Name.L,
+                X509Name.ST
+            }, new Hashtable
+            {
+                [X509Name.C] = "CN",
+                [X509Name.O] = "Fulu Newwork",
+                [X509Name.OU] = "Fulu RSA CA 2020",
+                [X509Name.L] = "Wuhan",
+                [X509Name.ST] = "Hubei",
+            });
+            //使用者DN
+            var subject = new X509Name(new ArrayList
+            {
+                X509Name.C,
+                X509Name.O,
+                X509Name.CN
+            }, new Hashtable
+            {
+                [X509Name.C] = "CN",
+                [X509Name.O] = "ICH",
+                [X509Name.CN] = "*.fulu.com"
+            });
+
+            var password = "123456";    //证书密码
+            var signatureAlgorithm = "SHA256WITHRSA"; //签名算法
+
+            //生成证书
+            CertificateGenerator.X509V3(algorithm, keySize, password, signatureAlgorithm, DateTime.Now.AddDays(-1),
+            DateTime.Now.AddDays(2), issuer, subject, "mycert.cert", "mypfx.pfx");
+
+            var pfx = new X509Certificate2("mypfx.pfx", password, X509KeyStorageFlags.Exportable);
+            var keyPair2 = DotNetUtilities.GetKeyPair(pfx.PrivateKey);
+
+            var subjectPublicKeyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair2.Public);
+            var privateKeyInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair2.Private);
+
+            var privateKey = Base64.ToBase64String(privateKeyInfo.ParsePrivateKey().GetEncoded());
+            var publicKey = Base64.ToBase64String(subjectPublicKeyInfo.GetEncoded());
+
+            var cert = new X509Certificate2("mycert.cert", string.Empty, X509KeyStorageFlags.Exportable);
+
+            var publicKey2 = Base64.ToBase64String(SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(DotNetUtilities.FromX509Certificate(cert).GetPublicKey()).GetEncoded());
+
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+
+            Console.WriteLine("Pfx证书私钥：");
+            Console.WriteLine(privateKey);
+
+            Console.WriteLine("Pfx证书公钥：");
+            Console.WriteLine(publicKey);
+
+            Console.WriteLine("Cert证书公钥：");
+            Console.WriteLine(publicKey2);
+
+            var data = "hello rsa";
+
+            Console.WriteLine($"加密原文：{data}");
+
+            var pkcs1data = RSA.EncryptToBase64(data, AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPublicKey(publicKey), Algorithms.RSA_ECB_PKCS1Padding);
+
+            Console.WriteLine("加密结果：");
+            Console.WriteLine(pkcs1data);
+
+            //pkcs1data =
+            //    "KGbgP3Ns6kFyjJ7tbepdZ3X8zssoHKWyVzVesghWg8fFP0ZMVumf+iXJ93LBu3xqKWE/5JTr1qFc5u0Cm3BUPnusMjBTgMrQk3zopVOELpChFbkeTR2YHsdDZdBzaJVN4SQQwHMkp2w8Pyb9x1NjsFoHHQEskBUNnOEuGkEFZdg=";
+
+            Console.WriteLine("解密结果：");
+            var datares = RSA.DecryptFromBase64(pkcs1data,
+                AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPrivateKey(privateKey), Algorithms.RSA_ECB_PKCS1Padding);
+
+            Console.WriteLine(datares);
         }
 
         private static void AES_Sample()

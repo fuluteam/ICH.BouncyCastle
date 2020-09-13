@@ -1,4 +1,6 @@
-﻿namespace ICH.BouncyCastle
+﻿using Org.BouncyCastle.Crypto;
+
+namespace ICH.BouncyCastle
 {
     public class KeyParameter
     {

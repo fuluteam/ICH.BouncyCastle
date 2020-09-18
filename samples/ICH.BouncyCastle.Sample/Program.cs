@@ -134,7 +134,7 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
         private static void Certificate_Sample()
         {
             var algorithm = "RSA";
-            var keySize = 1024;
+            var keySize = 2048;
 
             //颁发者DN
             var issuer = new X509Name(new ArrayList
@@ -168,12 +168,20 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             var password = "123456";    //证书密码
             var signatureAlgorithm = "SHA256WITHRSA"; //签名算法
 
+            var keyP = RSAKeyGenerator.Pkcs1();
+
+            var pK = AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPrivateKey(keyP.PrivateKey);
+            CertificateGenerator.GenerateSelfSignedCertificate(issuer, subject, pK);
+
             //生成证书
-            CertificateGenerator.X509V3(algorithm, keySize, password, signatureAlgorithm, DateTime.Now.AddDays(-1),
-            DateTime.Now.AddDays(2), issuer, subject, "mycert.cert", "mypfx.pfx");
+           // CertificateGenerator.X509V3(algorithm, keySize, password, signatureAlgorithm, DateTime.Now.AddDays(-1),DateTime.Now.AddDays(2), issuer, subject, "mycert.cert", "mypfx.pfx");
 
             var pfx = new X509Certificate2("mypfx.pfx", password, X509KeyStorageFlags.Exportable);
+
+            
+            
             var keyPair2 = DotNetUtilities.GetKeyPair(pfx.PrivateKey);
+            var a = pfx.GetRawCertDataString();
 
             var subjectPublicKeyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair2.Public);
             var privateKeyInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair2.Private);

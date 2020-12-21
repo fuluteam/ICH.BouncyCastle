@@ -9,6 +9,7 @@ using System.Xml;
 using ICH.BouncyCastle;
 using ICH.BouncyCastle.Asymmetry.RSA;
 using ICH.BouncyCastle.DSA;
+using ICH.BouncyCastle.Sample;
 using ICH.BouncyCastle.SM;
 using ICH.BouncyCastle.Symmetry;
 using Org.BouncyCastle.Asn1.X509;
@@ -109,6 +110,8 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
 
             //HMacSha256_Sample();
 
+
+
             //SHA1WithDSA_Sample();
 
             //SHA256WithDSA_Sample();
@@ -164,34 +167,35 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
                 [X509Name.O] = "ICH",
                 [X509Name.CN] = "*.fulu.com"
             });
+            CertificateGenerator.GenerateCertificate(new GenerateCertificateOptions { Path = "mypfx.pfx", Issuer = issuer, Subject = subject });
 
             var password = "123456";    //证书密码
             var signatureAlgorithm = "SHA256WITHRSA"; //签名算法
 
-            var keyP = RSAKeyGenerator.Pkcs1();
+            //var keyP = RSAKeyGenerator.Pkcs1();
 
-            var pK = AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPrivateKey(keyP.PrivateKey);
-            CertificateGenerator.GenerateSelfSignedCertificate(issuer, subject, pK);
+            //var pK = AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPrivateKey(keyP.PrivateKey);
+
+            //CertificateGenerator.GenerateCertificate(new GenerateCertificateOptions{ Path = "mypfx.pfx", Issuer = issuer, Subject = subject });
 
             //生成证书
-           // CertificateGenerator.X509V3(algorithm, keySize, password, signatureAlgorithm, DateTime.Now.AddDays(-1),DateTime.Now.AddDays(2), issuer, subject, "mycert.cert", "mypfx.pfx");
+            // CertificateGenerator.X509V3(algorithm, keySize, password, signatureAlgorithm, DateTime.Now.AddDays(-1),DateTime.Now.AddDays(2), issuer, subject, "mycert.cert", "mypfx.pfx");
 
             var pfx = new X509Certificate2("mypfx.pfx", password, X509KeyStorageFlags.Exportable);
 
             
-            
-            var keyPair2 = DotNetUtilities.GetKeyPair(pfx.PrivateKey);
-            var a = pfx.GetRawCertDataString();
 
+            var keyPair2 = DotNetUtilities.GetKeyPair(pfx.PrivateKey);
+            
             var subjectPublicKeyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair2.Public);
             var privateKeyInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair2.Private);
 
             var privateKey = Base64.ToBase64String(privateKeyInfo.ParsePrivateKey().GetEncoded());
             var publicKey = Base64.ToBase64String(subjectPublicKeyInfo.GetEncoded());
 
-            var cert = new X509Certificate2("mycert.cert", string.Empty, X509KeyStorageFlags.Exportable);
+            //var cert = new X509Certificate2("mycert.cert", string.Empty, X509KeyStorageFlags.Exportable);
 
-            var publicKey2 = Base64.ToBase64String(SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(DotNetUtilities.FromX509Certificate(cert).GetPublicKey()).GetEncoded());
+            //var publicKey2 = Base64.ToBase64String(SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(DotNetUtilities.FromX509Certificate(cert).GetPublicKey()).GetEncoded());
 
             Console.ForegroundColor = ConsoleColor.DarkYellow;
 
@@ -201,8 +205,8 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
             Console.WriteLine("Pfx证书公钥：");
             Console.WriteLine(publicKey);
 
-            Console.WriteLine("Cert证书公钥：");
-            Console.WriteLine(publicKey2);
+            //Console.WriteLine("Cert证书公钥：");
+            //Console.WriteLine(publicKey2);
 
             var data = "hello rsa";
 
@@ -492,7 +496,25 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
 
         private static void HMacSha256_Sample()
         {
+
+
             var s = "hello hmac sha256";
+
+            for (int i = 0; i < 50; i++)
+            {
+                var key = HMACSHA256.GeneratorKey();
+
+                var salt = Str.GetRandomString(16);
+                Console.WriteLine(salt);
+                var pass = Str.GenerateRandom(16);
+                Console.WriteLine(pass);
+                var res = HMACSHA256.Compute(salt + pass, key);
+                var res2 = HMACSHA256.Compute2(salt + pass, key);
+                Console.WriteLine(Base64.ToBase64String(res));
+                Console.WriteLine(Base64.ToBase64String(res2));
+            }
+
+
             Console.WriteLine(s);
             var k = HMACSHA256.GeneratorKey();
             Console.WriteLine("密钥（十六进制字符串）：");

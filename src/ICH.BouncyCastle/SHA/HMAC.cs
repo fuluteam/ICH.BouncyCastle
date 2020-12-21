@@ -32,7 +32,7 @@ namespace ICH.BouncyCastle
             {
                 throw new ArgumentNullException(nameof(data));
             }
-
+            
             var keyParameter = new Org.BouncyCastle.Crypto.Parameters.KeyParameter(key);
             var input = Encoding.UTF8.GetBytes(data);
             var mac = MacUtilities.GetMac(algorithm);

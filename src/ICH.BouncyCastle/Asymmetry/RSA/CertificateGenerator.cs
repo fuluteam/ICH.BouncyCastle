@@ -8,7 +8,6 @@ using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Utilities;
-using Org.BouncyCastle.Utilities.Encoders;
 using Org.BouncyCastle.X509;
 using System;
 using System.Collections;
@@ -99,10 +98,6 @@ namespace ICH.BouncyCastle.Asymmetry.RSA
             }
 
 
-            var a = certificate2.GetRawCertDataString();
-            var b = Hex.Encode(certificate2.RawData);
-            X509Certificate2 x2 = new X509Certificate2(Hex.Decode(b), "123456");
-            var c = a;
             //如果使用 netstandard2.0 请使用下面的代码
 #if NETSTANDARD2_0
             var certEntry = new X509CertificateEntry(x509Certificate);
@@ -177,7 +172,7 @@ namespace ICH.BouncyCastle.Asymmetry.RSA
                 fs.Write(bytes2, 0, bytes2.Length);
             }
 
-         
+
             //var x509 = new X509Certificate2(DotNetUtilities.ToX509Certificate(certificate))
             //{
             //    PrivateKey = dotNetPrivateKey,
@@ -228,25 +223,101 @@ namespace ICH.BouncyCastle.Asymmetry.RSA
             return securePassword;
         }
 
-
-        public static bool addCertToStore(System.Security.Cryptography.X509Certificates.X509Certificate2 cert, System.Security.Cryptography.X509Certificates.StoreName st, System.Security.Cryptography.X509Certificates.StoreLocation sl)
+        public static void GenerateCertificate(GenerateCertificateOptions options)
         {
-            bool bRet = false;
+            //generate random numbers
+            var randomGenerator = new CryptoApiRandomGenerator();
+            var random = new SecureRandom(randomGenerator);
 
-            try
+            var keyGenerator = GeneratorUtilities.GetKeyPairGenerator(options.Algorithm);
+            keyGenerator.Init(new KeyGenerationParameters(new SecureRandom(), options.KeyStrength));
+
+            var keyPair = keyGenerator.GenerateKeyPair();
+
+            //the certificate generator
+            var certificateGenerator = new X509V3CertificateGenerator();
+            certificateGenerator.AddExtension(X509Extensions.ExtendedKeyUsage.Id, true, new ExtendedKeyUsage(KeyPurposeID.IdKPServerAuth));
+
+            //serial number
+            var serialNumber = BigIntegers.CreateRandomInRange(BigInteger.One, BigInteger.ValueOf(long.MaxValue), random);
+            certificateGenerator.SetSerialNumber(serialNumber);
+
+            // Issuer and Subject Name
+            certificateGenerator.SetIssuerDN(options.Issuer);
+            certificateGenerator.SetSubjectDN(options.Subject);
+
+            //valid For
+            certificateGenerator.SetNotBefore(options.NotBefore);
+            certificateGenerator.SetNotAfter(options.NotAfter);
+
+            certificateGenerator.SetPublicKey(keyPair.Public);
+
+            ISignatureFactory signatureFactory = new Asn1SignatureFactory(options.SignatureAlgorithm, keyPair.Private);
+
+            //certificate
+            var certificate = certificateGenerator.Generate(signatureFactory);
+
+            certificate.CheckValidity(); //检查当前日期是否在证书的有效期内
+            certificate.Verify(keyPair.Public); //使用公钥验证证书的签名
+
+            var certEntry = new X509CertificateEntry(certificate);
+            var store = new Pkcs12StoreBuilder().Build();
+            store.SetCertificateEntry(options.FriendlyName, certEntry);   //设置证书  
+            var chain = new X509CertificateEntry[1];
+            chain[0] = certEntry;
+            store.SetKeyEntry(options.FriendlyName, new AsymmetricKeyEntry(keyPair.Private), chain);   //设置私钥  
+            using (var fs = File.Create(options.Path))
             {
-                X509Store store = new X509Store(st, sl);
-                store.Open(OpenFlags.ReadWrite);
-                store.Add(cert);
-
-                store.Close();
+                store.Save(fs, options.Password.ToCharArray(), new SecureRandom()); //保存  
             }
-            catch
-            {
-
-            }
-
-            return bRet;
         }
+    }
+
+    public class GenerateCertificateOptions
+    {
+        /// <summary>
+        /// 生成证书路径
+        /// </summary>
+        public string Path { get; set; }
+        /// <summary>
+        /// 颁发者DN
+        /// </summary>
+        public X509Name Issuer { get; set; }
+        /// <summary>
+        /// 使用者DN
+        /// </summary>
+        public X509Name Subject { get; set; }
+        /// <summary>
+        /// 密钥长度
+        /// </summary>
+        public int KeyStrength { get; set; } = 2048;
+        /// <summary>
+        /// 加密算法
+        /// </summary>
+        public string Algorithm { get; set; } = "RSA";
+        /// <summary>
+        /// 签名算法
+        /// </summary>
+        public string SignatureAlgorithm { get; set; } = "SHA256WITHRSA";
+        /// <summary>
+        /// 证书生效时间
+        /// </summary>
+        public DateTime NotBefore { get; set; } = DateTime.Now.AddDays(-1);
+        /// <summary>
+        /// 证书失效时间
+        /// </summary>
+        public DateTime NotAfter { get; set; } = DateTime.Now.AddYears(+2);
+        /// <summary>
+        /// 证书格式。默认Pfx
+        /// </summary>
+        public X509ContentType ExportX509ContentType { get; set; } = X509ContentType.Pfx;
+        /// <summary>
+        /// 证书密码
+        /// </summary>
+        public string Password { get; set; } = "123456";
+        /// <summary>
+        ///  证书友好名称
+        /// </summary>
+        public string FriendlyName { get; set; } = "";
     }
 }

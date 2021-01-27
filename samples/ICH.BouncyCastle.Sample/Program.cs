@@ -131,6 +131,36 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
 
             //Certificate_Sample();
 
+            var privateKey =
+                "MIICWwIBAAKBgQCiivTXjTFqon5L0mljBLFQdf7X5kj/bddcC80XNGEljqkgFAamd3cD+xAZfrknGDD+7g8hvVx2SW92m6v6ky6h3euDXFj82cxn8VfXjQs0/t9wKl0n9+GAsDeo5tlnqyY5h1Dbqe3zyvmkX1hD4GR8gvnH/7dYQdxLTp5vfftbRwIDAQABAoGAOH1Tj3A2GunDO+WyE6QnXZ/MhEs31nHdtVMyoVxmYM+eTpQ3JXaCaeNA2qN0hLY/HPIuVxsA/ekSsGV01R5+x1uvwenhqrwnNTvcF9HP3H93jopgpJXHYaYbcLtYdnrrxd5Pm8mmVTV7r/co0CGEGO+sfQ2uLEZtfxbyvEvaFD0CQQDVx91c0mAZisyR56kKXE1/fKF38mX59F6wB8yx0I911IszhDcol4UgaF5amfXcN8bCDXJGJe9vbSclNRaWdxVzAkEAwqSmg3vtfjrE1FrkSl1pznTRoZhF72Hvpa8q/nJtHM7jMS53QGBuei6Ss+p3u/URj8o1bnNqvLuh7bJ7IM0N3QJAIvZCz5FgQg0fE6WNUbJywizBw3oTD2PVsHg2E8aGD8Eo2s3+r1bIYNpww+R1/wPoL4g/bhV6KQDy6/TYstba3QJAThetTxeLo5eEnQaSjVuJNfIcoU7s0Cxk7/6lq0zRhjtjX7oa0lNeP9srtM+flmOu1hf09AmOi4ZkY2+2guSCaQJAGs+oCQOZxDnc8Uf/xKEcFZet3UxBOoccaNPK6jCOwgGSkQDx3CxmCJd8o8xuTIknS7xLfZk7t9QUl6Q102NbJw==";
+            //根据私钥提取公钥
+            var publicKey = RSAKeyConverter.GetPublicKeyFromPrivateKeyPkcs1(privateKey);
+
+            //公钥
+            //MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCiivTXjTFqon5L0mljBLFQdf7X5kj/bddcC80XNGEljqkgFAamd3cD+xAZfrknGDD+7g8hvVx2SW92m6v6ky6h3euDXFj82cxn8VfXjQs0/t9wKl0n9+GAsDeo5tlnqyY5h1Dbqe3zyvmkX1hD4GR8gvnH/7dYQdxLTp5vfftbRwIDAQAB
+
+            var publicParameter = (RsaKeyParameters)PublicKeyFactory.CreateKey(Convert.FromBase64String(publicKey));
+
+            //公钥中取出模数Modulus转十六进制字符串
+            var modulus = Hex.ToHexString(publicParameter.Modulus.ToByteArrayUnsigned()).ToUpper();
+
+            //modulus=A28AF4D78D316AA27E4BD2696304B15075FED7E648FF6DD75C0BCD173461258EA9201406A6777703FB10197EB9271830FEEE0F21BD5C76496F769BABFA932EA1DDEB835C58FCD9CC67F157D78D0B34FEDF702A5D27F7E180B037A8E6D967AB26398750DBA9EDF3CAF9A45F5843E0647C82F9C7FFB75841DC4B4E9E6F7DFB5B47
+
+            //公钥中取出指数Exponent转十六进制字符串
+            var exponent = Hex.ToHexString(publicParameter.Exponent.ToByteArrayUnsigned());
+
+            //exponent=010001
+
+            var cipherText =
+                "2356b0c72edb4b0340793ae3e39f0ff7f42290e3a1e8cfc14686787a4c923c5677adbbc2c734c2fdfcded2dbfe67044dec2399f0c19e97c3105271a1cdcfd616d9ddc78c387f136a694f4e004a11d51bae7c9eb33c3531cac1b0abc44147c3d9619434d422bc1f5eabf587eadfb1e8714205d0890dbd1295b7609b3fd76c382d";
+
+            var password = RSA.DecryptFromHex(cipherText, AsymmetricKeyUtilities.GetAsymmetricKeyParameterFormPrivateKey(privateKey),
+                Algorithms.RSA_NONE_PKCS1Padding);
+
+            password = Strings.FromByteArray(Base64.Decode(password));
+
+            //123456
+
             Console.ReadLine();
         }
 
@@ -183,10 +213,10 @@ l3JuSVQYJXm733zyUJQZAkB+lBcmTUYtE8SU+V9uhyKJnFKo9Pr6sRZnfd443J7E
 
             var pfx = new X509Certificate2("mypfx.pfx", password, X509KeyStorageFlags.Exportable);
 
-            
+
 
             var keyPair2 = DotNetUtilities.GetKeyPair(pfx.PrivateKey);
-            
+
             var subjectPublicKeyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair2.Public);
             var privateKeyInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair2.Private);
 
